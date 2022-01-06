@@ -1,0 +1,50 @@
+[
+    {
+        "src_ip": "10.0.0.1", 
+        "dst_ip": "10.0.0.14",
+        "main_A": [
+            {
+                "device_id": "1",
+                "output_port": "4"
+            },
+            {
+                "device_id": "8",
+                "output_port": "6"
+            },
+            {
+                "device_id": "10",
+                "output_port": "4"
+            },
+            {
+                "device_id": "11",
+                "output_port": "6"
+            },
+            {
+                "device_id": "14",
+                "output_port": "1"
+            }
+        ],
+        "main_B": [
+            {
+                "device_id": "14",
+                "output_port": "3"
+            },
+            {
+                "device_id": "11",
+                "output_port": "3"
+            },
+            {
+                "device_id": "10",
+                "output_port": "2"
+            },
+            {
+                "device_id": "8",
+                "output_port": "2"
+            },
+            {
+                "device_id": "1",
+                "output_port": "1"
+            }
+        ]
+    }
+]
