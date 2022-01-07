@@ -31,33 +31,42 @@ class TrafficMonitor(app_manager.RyuApp):
           #  baselineUpdate()
     def _baselineUpdate(self,flowid):
         flowInfo =  self.flow_path[flowid]
+        
         if flowInfo['state'] == 'main':
-            # delete
-            for device in flowInfo['main_A']:
-                switch = self.datapaths[int(device['device_id'])]           #, device['output_port']
-                parser = switch.ofproto_parser
-                match = parser.OFPMatch(eth_type=ether_types.ETH_TYPE_IP, ipv4_src=flowInfo['src_ip'], ipv4_dst=flowInfo['dst_ip'])
-                self.del_flow(switch,match)
-            for device in flowInfo['main_B']:
-                
-                switch = self.datapaths[int(device['device_id'])]           #, device['output_port']
-                parser = switch.ofproto_parser
-                match = parser.OFPMatch(eth_type=ether_types.ETH_TYPE_IP, ipv4_src=flowInfo['dst_ip'], ipv4_dst=flowInfo['src_ip'])
-                self.del_flow(switch,match)
-            # add
-            for device in flowInfo['backup_A']:
-                switch = self.datapaths[int(device['device_id'])] 
-                parser = switch.ofproto_parser
-                actions = [parser.OFPActionOutput(int(device['output_port']))]
-                match = parser.OFPMatch(eth_type=ether_types.ETH_TYPE_IP, ipv4_src=flowInfo['src_ip'], ipv4_dst=flowInfo['dst_ip'])
-                self.add_flow(switch, 1024, match, actions)
-            # Install B
-            for device in flowInfo['backup_B']:
-                switch = self.datapaths[int(device['device_id'])] 
-                parser = switch.ofproto_parser
-                actions = [parser.OFPActionOutput(int(device['output_port']))]
-                match = parser.OFPMatch(eth_type=ether_types.ETH_TYPE_IP, ipv4_src=flowInfo['dst_ip'], ipv4_dst=flowInfo['src_ip'])
-                self.add_flow(switch, 1024, match, actions)
+            old = 'main'
+            new = 'backup'
+        else:
+            old = 'backup'
+            new = 'main'
+        
+        # delete
+        for device in flowInfo[old + '_A']:
+            switch = self.datapaths[int(device['device_id'])]           #, device['output_port']
+            parser = switch.ofproto_parser
+            match = parser.OFPMatch(eth_type=ether_types.ETH_TYPE_IP, ipv4_src=flowInfo['src_ip'], ipv4_dst=flowInfo['dst_ip'])
+            self.del_flow(switch,match)
+        for device in flowInfo[old+'_B']:
+            
+            switch = self.datapaths[int(device['device_id'])]           #, device['output_port']
+            parser = switch.ofproto_parser
+            match = parser.OFPMatch(eth_type=ether_types.ETH_TYPE_IP, ipv4_src=flowInfo['dst_ip'], ipv4_dst=flowInfo['src_ip'])
+            self.del_flow(switch,match)
+        # add
+        for device in flowInfo[new+'_A']:
+            switch = self.datapaths[int(device['device_id'])] 
+            parser = switch.ofproto_parser
+            actions = [parser.OFPActionOutput(int(device['output_port']))]
+            match = parser.OFPMatch(eth_type=ether_types.ETH_TYPE_IP, ipv4_src=flowInfo['src_ip'], ipv4_dst=flowInfo['dst_ip'])
+            self.add_flow(switch, 1024, match, actions)
+        # Install B
+        for device in flowInfo[new+'_B']:
+            switch = self.datapaths[int(device['device_id'])] 
+            parser = switch.ofproto_parser
+            actions = [parser.OFPActionOutput(int(device['output_port']))]
+            match = parser.OFPMatch(eth_type=ether_types.ETH_TYPE_IP, ipv4_src=flowInfo['dst_ip'], ipv4_dst=flowInfo['src_ip'])
+            self.add_flow(switch, 1024, match, actions)
+        
+        flowInfo['state'] = new 
 
     @set_ev_cls(ofp_event.EventOFPSwitchFeatures, CONFIG_DISPATCHER)
     def switch_features_handler(self, ev):

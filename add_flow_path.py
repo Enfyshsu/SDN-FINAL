@@ -11,16 +11,17 @@ def add_flow_path(filename, path):
 def inputPath(n, path, kind):
     path[kind] = []
     for i in range(n):
-        device_id, output_port = input("<device_id> <output_port>: ").split()
+        device_id, input_port, output_port = input("<device_id> <input_port> <output_port>: ").split()
         node = dict({
                 "device_id": str(device_id), 
+                "input_port": str(input_port),
                 "output_port": str(output_port)
         })
         
         path[kind].append(node)
 
 def main():
-    filename = "flow_path_2.json"
+    filename = "flow_path.json"
     path = {}
     src_host = input("Enter source host: ")
     dst_host = input("Enter destination host: ")
