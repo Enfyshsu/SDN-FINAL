@@ -1,470 +1,126 @@
 [
     {
-        "src_ip": "10.0.0.1",
-        "dst_ip": "10.0.0.14",
-        "main_A": [
-            {
-                "device_id": "1",
-                "input_port": "1",
-                "output_port": "5"
-            },
-            {
-                "device_id": "8",
-                "input_port": "2",
-                "output_port": "6"
-            },
-            {
-                "device_id": "10",
-                "input_port": "2",
-                "output_port": "4"
-            },
-            {
-                "device_id": "11",
-                "input_port": "3",
-                "output_port": "6"
-            },
-            {
-                "device_id": "14",
-                "input_port": "3",
-                "output_port": "1"
-            }
-        ],
-        "main_B": [
-            {
-                "device_id": "14",
-                "input_port": "1",
-                "output_port": "3"
-            },
-            {
-                "device_id": "11",
-                "input_port": "6",
-                "output_port": "3"
-            },
-            {
-                "device_id": "10",
-                "input_port": "4",
-                "output_port": "2"
-            },
-            {
-                "device_id": "8",
-                "input_port": "6",
-                "output_port": "2"
-            },
-            {
-                "device_id": "1",
-                "input_port": "5",
-                "output_port": "1"
-            }
-        ],
-        "backup_A": [
-            {
-                "device_id": "1",
-                "input_port": "1",
-                "output_port": "4"
-            },
-            {
-                "device_id": "6",
-                "input_port": "2",
-                "output_port": "5"
-            },
-            {
-                "device_id": "11",
-                "input_port": "2",
-                "output_port": "6"
-            },
-            {
-                "device_id": "14",
-                "input_port": "3",
-                "output_port": "1"
-            }
-        ],
-        "backup_B": [
-            {
-                "device_id": "14",
-                "input_port": "1",
-                "output_port": "3"
-            },
-            {
-                "device_id": "11",
-                "input_port": "6",
-                "output_port": "2"
-            },
-            {
-                "device_id": "6",
-                "input_port": "5",
-                "output_port": "2"
-            },
-            {
-                "device_id": "1",
-                "input_port": "4",
-                "output_port": "1"
-            }
-        ]
-    },
-    {
-        "src_ip": "10.0.0.2",
-        "dst_ip": "10.0.0.16",
-        "main_A": [
-            {
-                "device_id": "2",
-                "input_port": "1",
-                "output_port": "4"
-            },
-            {
-                "device_id": "8",
-                "input_port": "3",
-                "output_port": "6"
-            },
-            {
-                "device_id": "10",
-                "input_port": "2",
-                "output_port": "5"
-            },
-            {
-                "device_id": "16",
-                "input_port": "2",
-                "output_port": "1"
-            }
-        ],
-        "main_B": [
-            {
-                "device_id": "16",
-                "input_port": "1",
-                "output_port": "2"
-            },
-            {
-                "device_id": "10",
-                "input_port": "5",
-                "output_port": "2"
-            },
-            {
-                "device_id": "8",
-                "input_port": "6",
-                "output_port": "3"
-            },
-            {
-                "device_id": "2",
-                "input_port": "4",
-                "output_port": "1"
-            }
-        ],
-        "backup_A": [
-            {
-                "device_id": "2",
-                "input_port": "1",
-                "output_port": "2"
-            },
-            {
-                "device_id": "1",
-                "input_port": "2",
-                "output_port": "4"
-            },
-            {
-                "device_id": "6",
-                "input_port": "2",
-                "output_port": "5"
-            },
-            {
-                "device_id": "11",
-                "input_port": "2",
-                "output_port": "4"
-            },
-            {
-                "device_id": "12",
-                "input_port": "2",
-                "output_port": "4"
-            },
-            {
-                "device_id": "16",
-                "input_port": "3",
-                "output_port": "1"
-            }
-        ],
-        "backup_B": [
-            {
-                "device_id": "16",
-                "input_port": "1",
-                "output_port": "3"
-            },
-            {
-                "device_id": "12",
-                "input_port": "4",
-                "output_port": "2"
-            },
-            {
-                "device_id": "11",
-                "input_port": "4",
-                "output_port": "2"
-            },
-            {
-                "device_id": "6",
-                "input_port": "5",
-                "output_port": "2"
-            },
-            {
-                "device_id": "1",
-                "input_port": "4",
-                "output_port": "2"
-            },
-            {
-                "device_id": "2",
-                "input_port": "2",
-                "output_port": "1"
-            }
-        ]
-    },
-    {
-        "src_ip": "10.0.0.4",
-        "dst_ip": "10.0.0.18",
-        "main_A": [
-            {
-                "device_id": "4",
-                "input_port": "1",
-                "output_port": "4"
-            },
-            {
-                "device_id": "8",
-                "input_port": "4",
-                "output_port": "5"
-            },
-            {
-                "device_id": "18",
-                "input_port": "2",
-                "output_port": "1"
-            }
-        ],
-        "main_B": [
-            {
-                "device_id": "18",
-                "input_port": "1",
-                "output_port": "2"
-            },
-            {
-                "device_id": "8",
-                "input_port": "5",
-                "output_port": "4"
-            },
-            {
-                "device_id": "4",
-                "input_port": "4",
-                "output_port": "1"
-            }
-        ],
-        "backup_A": [
-            {
-                "device_id": "4",
-                "input_port": "1",
-                "output_port": "2"
-            },
-            {
-                "device_id": "1",
-                "input_port": "3",
-                "output_port": "4"
-            },
-            {
-                "device_id": "6",
-                "input_port": "2",
-                "output_port": "5"
-            },
-            {
-                "device_id": "11",
-                "input_port": "2",
-                "output_port": "3"
-            },
-            {
-                "device_id": "10",
-                "input_port": "4",
-                "output_port": "3"
-            },
-            {
-                "device_id": "18",
-                "input_port": "3",
-                "output_port": "1"
-            }
-        ],
-        "backup_B": [
-            {
-                "device_id": "18",
-                "input_port": "1",
-                "output_port": "3"
-            },
-            {
-                "device_id": "10",
-                "input_port": "3",
-                "output_port": "4"
-            },
-            {
-                "device_id": "11",
-                "input_port": "3",
-                "output_port": "2"
-            },
-            {
-                "device_id": "6",
-                "input_port": "5",
-                "output_port": "2"
-            },
-            {
-                "device_id": "1",
-                "input_port": "4",
-                "output_port": "3"
-            },
-            {
-                "device_id": "4",
-                "input_port": "2",
-                "output_port": "1"
-            }
-        ]
-    },
-    {
         "src_ip": "10.0.0.2",
         "dst_ip": "10.0.0.13",
-        "main_A": [
-            {
-                "device_id": "2",
+        "main_A": {
+            "2": {
                 "input_port": "1",
                 "output_port": "2"
             },
-            {
-                "device_id": "1",
+            "1": {
                 "input_port": "2",
                 "output_port": "5"
             },
-            {
-                "device_id": "8",
+            "8": {
                 "input_port": "2",
                 "output_port": "6"
             },
-            {
-                "device_id": "10",
+            "10": {
                 "input_port": "2",
                 "output_port": "4"
             },
-            {
-                "device_id": "11",
+            "11": {
                 "input_port": "3",
                 "output_port": "6"
             },
-            {
-                "device_id": "14",
+            "14": {
                 "input_port": "3",
                 "output_port": "4"
             },
-            {
-                "device_id": "13",
+            "13": {
                 "input_port": "3",
                 "output_port": "1"
             }
-        ],
-        "main_B": [
-            {
-                "device_id": "13",
+        },
+        "main_B": {
+            "13": {
                 "input_port": "1",
                 "output_port": "3"
             },
-            {
-                "device_id": "14",
+            "14": {
                 "input_port": "4",
                 "output_port": "3"
             },
-            {
-                "device_id": "11",
+            "11": {
                 "input_port": "6",
                 "output_port": "3"
             },
-            {
-                "device_id": "10",
+            "10": {
                 "input_port": "4",
                 "output_port": "2"
             },
-            {
-                "device_id": "8",
+            "8": {
                 "input_port": "6",
                 "output_port": "2"
             },
-            {
-                "device_id": "1",
+            "1": {
                 "input_port": "5",
                 "output_port": "2"
             },
-            {
-                "device_id": "2",
+            "2": {
                 "input_port": "2",
                 "output_port": "1"
             }
-        ],
-        "backup_A": [
-            {
-                "device_id": "2",
+        },
+        "backup_A": {
+            "2": {
                 "input_port": "1",
                 "output_port": "2"
             },
-            {
-                "device_id": "1",
+            "1": {
                 "input_port": "2",
                 "output_port": "4"
             },
-            {
-                "device_id": "6",
+            "6": {
                 "input_port": "2",
                 "output_port": "5"
             },
-            {
-                "device_id": "11",
+            "11": {
                 "input_port": "2",
                 "output_port": "5"
             },
-            {
-                "device_id": "15",
+            "15": {
                 "input_port": "2",
                 "output_port": "3"
             },
-            {
-                "device_id": "14",
+            "14": {
                 "input_port": "5",
                 "output_port": "4"
             },
-            {
-                "device_id": "13",
+            "13": {
                 "input_port": "3",
                 "output_port": "1"
             }
-        ],
-        "backup_B": [
-            {
-                "device_id": "13",
+        },
+        "backup_B": {
+            "13": {
                 "input_port": "1",
                 "output_port": "3"
             },
-            {
-                "device_id": "14",
+            "14": {
                 "input_port": "4",
                 "output_port": "5"
             },
-            {
-                "device_id": "15",
+            "15": {
                 "input_port": "3",
                 "output_port": "2"
             },
-            {
-                "device_id": "11",
+            "11": {
                 "input_port": "5",
                 "output_port": "2"
             },
-            {
-                "device_id": "6",
+            "6": {
                 "input_port": "5",
                 "output_port": "2"
             },
-            {
-                "device_id": "1",
+            "1": {
                 "input_port": "4",
                 "output_port": "2"
             },
-            {
-                "device_id": "2",
+            "2": {
                 "input_port": "2",
                 "output_port": "1"
             }
-        ]
+        }
     }
 ]

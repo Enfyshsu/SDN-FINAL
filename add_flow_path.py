@@ -9,16 +9,15 @@ def add_flow_path(filename, path):
         json.dump(data, f, indent=4)
 
 def inputPath(n, path, kind):
-    path[kind] = []
+    path[kind] = {}
     for i in range(n):
         device_id, input_port, output_port = input("<device_id> <input_port> <output_port>: ").split()
-        node = dict({
-                "device_id": str(device_id), 
+        inout = dict({
                 "input_port": str(input_port),
                 "output_port": str(output_port)
         })
         
-        path[kind].append(node)
+        path[kind][str(device_id)] = inout
 
 def main():
     filename = "flow_path.json"

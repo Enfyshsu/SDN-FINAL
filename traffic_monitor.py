@@ -18,7 +18,8 @@ class TrafficMonitor(app_manager.RyuApp):
     def __init__(self, *args, **kwargs):
         super(TrafficMonitor, self).__init__(*args, **kwargs)
         self.datapaths = {}
-        self.monitor_thread = hub.spawn(self._monitor)
+        #self.monitor_thread = hub.spawn(self._monitor)
+        self.monitor_thread = hub.spawn(self._periodical_update)
         self.pre_byte = {}
         self.flow_pre_byte = {}
         self.conjunction = {}
@@ -26,9 +27,23 @@ class TrafficMonitor(app_manager.RyuApp):
 
         #print(self.flow_path)
     #algorithms =[alg1(),alg2()]
-   # def update(flowId,method):
-        #if method == 'baseline':
-          #  baselineUpdate()
+    def update(self, flowId, method):
+        if method == 'baseline':
+            self._baselineUpdate(flowId)
+
+    def _IMU_update(self, flowid):
+        if flowInfo['state'] == 'main':
+            old = 'main'
+            new = 'backup'
+        else:
+            old = 'backup'
+            new = 'main'
+        # Phase 1: Install new rules
+
+        # Phase 2: replacement
+
+        # Phase 3: Delete old rules
+
     def _baselineUpdate(self,flowid):
         flowInfo =  self.flow_path[flowid]
         
@@ -41,28 +56,29 @@ class TrafficMonitor(app_manager.RyuApp):
         
         # delete
         for device in flowInfo[old + '_A']:
-            switch = self.datapaths[int(device['device_id'])]           #, device['output_port']
+            switch = self.datapaths[int(device)]           #, device['output_port']
             parser = switch.ofproto_parser
             match = parser.OFPMatch(eth_type=ether_types.ETH_TYPE_IP, ipv4_src=flowInfo['src_ip'], ipv4_dst=flowInfo['dst_ip'])
             self.del_flow(switch,match)
         for device in flowInfo[old+'_B']:
             
-            switch = self.datapaths[int(device['device_id'])]           #, device['output_port']
+            switch = self.datapaths[int(device)]           #, device['output_port']
             parser = switch.ofproto_parser
             match = parser.OFPMatch(eth_type=ether_types.ETH_TYPE_IP, ipv4_src=flowInfo['dst_ip'], ipv4_dst=flowInfo['src_ip'])
             self.del_flow(switch,match)
+
         # add
-        for device in flowInfo[new+'_A']:
-            switch = self.datapaths[int(device['device_id'])] 
+        for device, ports in flowInfo[new+'_A'].items():
+            switch = self.datapaths[int(device)] 
             parser = switch.ofproto_parser
-            actions = [parser.OFPActionOutput(int(device['output_port']))]
+            actions = [parser.OFPActionOutput(int(ports['output_port']))]
             match = parser.OFPMatch(eth_type=ether_types.ETH_TYPE_IP, ipv4_src=flowInfo['src_ip'], ipv4_dst=flowInfo['dst_ip'])
             self.add_flow(switch, 1024, match, actions)
         # Install B
-        for device in flowInfo[new+'_B']:
-            switch = self.datapaths[int(device['device_id'])] 
+        for device, ports in flowInfo[new+'_B'].items():
+            switch = self.datapaths[int(device)] 
             parser = switch.ofproto_parser
-            actions = [parser.OFPActionOutput(int(device['output_port']))]
+            actions = [parser.OFPActionOutput(int(ports['output_port']))]
             match = parser.OFPMatch(eth_type=ether_types.ETH_TYPE_IP, ipv4_src=flowInfo['dst_ip'], ipv4_dst=flowInfo['src_ip'])
             self.add_flow(switch, 1024, match, actions)
         
@@ -73,6 +89,7 @@ class TrafficMonitor(app_manager.RyuApp):
         datapath = ev.msg.datapath
         ofproto = datapath.ofproto
         parser = datapath.ofproto_parser
+        device = str(datapath.id)
 
         # install table-miss flow entry
         #
@@ -88,23 +105,27 @@ class TrafficMonitor(app_manager.RyuApp):
         #self.send_port_states_request(datapath)
         
 
-        for path in self.flow_path:
+        for flowInfo in self.flow_path:
             # Install A
-            for pair in path['main_A']:
-                #print(pair)
-                #print(datapath.id, pair['device_id'])
-                if int(datapath.id) == int(pair['device_id']):
-                    actions = [parser.OFPActionOutput(int(pair['output_port']))]
-                    match = parser.OFPMatch(eth_type=ether_types.ETH_TYPE_IP, ipv4_src=path['src_ip'], ipv4_dst=path['dst_ip'])
-                    self.add_flow(datapath, 1024, match, actions)
+            #print(datapath.id)
+            #print(flowInfo['main_A'][str(datapath.id)])
+            
+            if device in flowInfo['main_A'].keys():
+                output_port = int(flowInfo['main_A'][device]['output_port'])
+                actions = [parser.OFPActionOutput(output_port)]
+                match = parser.OFPMatch(eth_type=ether_types.ETH_TYPE_IP, ipv4_src=flowInfo['src_ip'], ipv4_dst=flowInfo['dst_ip'])
+                self.add_flow(datapath, 1024, match, actions)
+
+        for flowInfo in self.flow_path:
             # Install B
-            for pair in path['main_B']:
-                #print(pair)
-                #print(datapath.id, pair['device_id'])
-                if int(datapath.id) == int(pair['device_id']):
-                    actions = [parser.OFPActionOutput(int(pair['output_port']))]
-                    match = parser.OFPMatch(eth_type=ether_types.ETH_TYPE_IP, ipv4_src=path['dst_ip'], ipv4_dst=path['src_ip'])
-                    self.add_flow(datapath, 1024, match, actions)
+            #print(datapath.id)
+            #print(flowInfo['main_B'][str(datapath.id)])
+
+            if device in flowInfo['main_B'].keys():
+                output_port = int(flowInfo['main_B'][device]['output_port'])
+                actions = [parser.OFPActionOutput(output_port)]
+                match = parser.OFPMatch(eth_type=ether_types.ETH_TYPE_IP, ipv4_src=flowInfo['dst_ip'], ipv4_dst=flowInfo['src_ip'])
+                self.add_flow(datapath, 1024, match, actions)
         #self.send_port_states_request(datapath)
 
             
@@ -173,11 +194,23 @@ class TrafficMonitor(app_manager.RyuApp):
         #print("-----pre_byte-----")
         #print(self.pre_byte)
 
-    def _monitor(self):
+    def _periodical_update(self):
         while True:
-            for dp in self.datapaths.values():
-                self._request_stats(dp)
-            hub.sleep(5)
+            #for dp in self.datapaths.values():
+            #    self._request_stats(dp)
+            print("---------------")
+            if len(self.datapaths) > 1:
+                print("Update !")
+                try:
+                    self.update(0, 'baseline')
+                    self.update(1, 'baseline')
+                    self.update(2, 'baseline')
+                    self.update(3, 'baseline')
+                except:
+                    pass
+            else:
+                print("No switches")
+            hub.sleep(20)
 
     def _request_stats(self, datapath):
         self.logger.debug('send stats request: %016x', datapath.id)
