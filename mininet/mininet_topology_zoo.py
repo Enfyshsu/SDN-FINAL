@@ -94,16 +94,17 @@ def main():
 
     net.start()
     h1 = net.get('h1')
-    h1.cmd('arp -s 10.0.0.14 00:00:00:00:00:0e')
+    h1.cmd('arp -s 10.0.0.11 00:00:00:00:00:0b')
 
-    h14 = net.get('h14')
-    h14.cmd('arp -s 10.0.0.1 00:00:00:00:00:01')
-    h14.cmd('iperf3 -s &')
+    h11 = net.get('h11')
+    h11.cmd('arp -s 10.0.0.1 00:00:00:00:00:01')
 
     h2 = net.get('h2')
     h2.cmd('arp -s 10.0.0.16 00:00:00:00:00:10')
+    #h2.cmd('iperf3 -s &')
     h16 = net.get('h16')
     h16.cmd('arp -s 10.0.0.2 00:00:00:00:00:02')
+    #h16.cmd('iperf3 -s &')
     
     h4 = net.get('h4')
     h4.cmd('arp -s 10.0.0.18 00:00:00:00:00:12')
@@ -112,8 +113,10 @@ def main():
     
     h2 = net.get('h2')
     h2.cmd('arp -s 10.0.0.13 00:00:00:00:00:0d')
+    h2.cmd('iperf3 -s &')
     h13 = net.get('h13')
     h13.cmd('arp -s 10.0.0.2 00:00:00:00:00:02')
+    h13.cmd('iperf3 -s &')
     #dumpNodeConnections(net.hosts)
     #net.pingAll()
     CLI(net)
