@@ -93,11 +93,20 @@ def main():
     net.addController(name='c0', controller = RemoteController)
 
     net.start()
+    
+    h2 = net.get('h2')
+    h2.cmd('arp -s 10.0.0.13 00:00:00:00:00:0d')
+    h2.cmd('iperf3 -s &')
+    h13 = net.get('h13')
+    h13.cmd('arp -s 10.0.0.2 00:00:00:00:00:02')
+    h13.cmd('iperf3 -s &')
+    
     h1 = net.get('h1')
     h1.cmd('arp -s 10.0.0.11 00:00:00:00:00:0b')
-
+    #h1.cmd('iperf3 -s &')
     h11 = net.get('h11')
     h11.cmd('arp -s 10.0.0.1 00:00:00:00:00:01')
+    #h11.cmd('iperf3 -s &')
 
     h2 = net.get('h2')
     h2.cmd('arp -s 10.0.0.16 00:00:00:00:00:10')
@@ -111,12 +120,7 @@ def main():
     h18 = net.get('h18')
     h18.cmd('arp -s 10.0.0.4 00:00:00:00:00:04')
     
-    h2 = net.get('h2')
-    h2.cmd('arp -s 10.0.0.13 00:00:00:00:00:0d')
-    h2.cmd('iperf3 -s &')
-    h13 = net.get('h13')
-    h13.cmd('arp -s 10.0.0.2 00:00:00:00:00:02')
-    h13.cmd('iperf3 -s &')
+
     #dumpNodeConnections(net.hosts)
     #net.pingAll()
     CLI(net)
