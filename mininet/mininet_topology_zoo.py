@@ -1,5 +1,5 @@
 from mininet.net import Mininet
-from mininet.node import Controller, RemoteController
+from mininet.node import Controller, RemoteController, OVSKernelSwitch
 from mininet.cli import CLI
 from mininet.log import setLogLevel, info
 from mininet.link import Link, Intf, TCLink
@@ -7,6 +7,9 @@ from mininet.topo import Topo
 from mininet.util import dumpNodeConnections
 import logging
 import os
+
+switchParams = {}
+switchParams['protocols'] = ['OpenFlow13']
 
 class Mininet_topology_zoo(Mininet):
     '''
@@ -22,7 +25,7 @@ class Mininet_topology_zoo(Mininet):
     def __init__(self, *args, **kwargs):
         # Read topology info
         name = 'Easynet'
-        path = "/home/enfyshsu/topo_zoo/" + name + ".gml"
+        path = "/home/r09922182/SDN-FINAL/mininet/" + name + ".gml"
         file = open(path, "r")
         self.all_switches, self.all_links = self.handler(file)
         # Add default members to class
@@ -69,7 +72,8 @@ class Mininet_topology_zoo(Mininet):
         for s in switches:
             print(s)
             #self.addSwitch('s%d' %s, annotations={"latitude": self.latitude[s - 1], 'longitude': self.longitude[s-1]})
-            self.addSwitch('s%d' %s)
+            #self.addSwitch('s%d' %s, cls=OVSKernelSwitch, **switchParams)
+            self.addSwitch('s%d' %s, cls=OVSKernelSwitch)
             
             h = hex(s).split('x')[-1]
             if len(h) == 1:
@@ -79,19 +83,22 @@ class Mininet_topology_zoo(Mininet):
             self.addHost('h%d'  %s, mac=mac)
 
     def _addLinks(self,switches,links):
+        linkopts = {'bw':512, 'delay':'3ms', 'loss': 0}
         for s in switches:
-            self.addLink("h%s" %s, "s%s" %s, 0)
+            self.addLink("h%s" %s, "s%s" %s, **linkopts)
+            #self.addLink("h%s" %s, "s%s" %s, bw=10)
         for dpid1, dpid2 in links:
-            self.addLink(node1="s%s" %dpid1, node2="s%s" %dpid2)
+            self.addLink(node1="s%s" %dpid1, node2="s%s" %dpid2, **linkopts)
+            #self.addLink(node1="s%s" %dpid1, node2="s%s" %dpid2, bw=10)
 
 topos = {'mytopo':(lambda :Mininet_topology_zoo("Easynet"))}
 
 def main():
     "Create and test a simple network"
     #topo = Mininet_topology_zoo("Easynet")
-    net = Mininet_topology_zoo(topo=None, controller=None)
-    net.addController(name='c0', controller = RemoteController)
-
+    net = Mininet_topology_zoo(topo=None, controller=None, link = TCLink)
+    net.addController(name='c0', controller = RemoteController, ip='140.112.28.127')
+    #myAddLinks(net, net.all_switches, net.all_links)
     net.start()
     
     h2 = net.get('h2')
@@ -99,7 +106,7 @@ def main():
     #h2.cmd('iperf3 -s &')
     h13 = net.get('h13')
     h13.cmd('arp -s 10.0.0.2 00:00:00:00:00:02')
-    #h13.cmd('iperf3 -s &')
+    h13.cmd('iperf3 -s &')
     
     h1 = net.get('h1')
     h1.cmd('arp -s 10.0.0.11 00:00:00:00:00:0b')
