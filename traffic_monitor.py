@@ -39,7 +39,7 @@ class TrafficMonitor(app_manager.RyuApp):
     def _IMU_update(self, flowid):
         flowInfo =  self.flow_path[flowid]
         self._IMU_update_dir(flowid, 'A')
-        self._IMU_update_dir(flowid, 'B')
+        #self._IMU_update_dir(flowid, 'B')
         state = flowInfo['state']
         if state == 'main':
             flowInfo['state'] = 'backup'
@@ -102,7 +102,7 @@ class TrafficMonitor(app_manager.RyuApp):
             #req = parser.OFPBarrierRequest(switch)
             #switch.send_msg(req)
             
-        #time.sleep(3)
+        time.sleep(0.1)
 
         # Phase 2: replacement
         for device in replacementSet:
@@ -119,8 +119,8 @@ class TrafficMonitor(app_manager.RyuApp):
             self.add_flow(switch, 1024, match, actions)
             
             
-        #time.sleep(1)
- 
+        time.sleep(0.1)
+
         # Phase 3: Delete old rules
         for device in deleteSet:
             switch = self.datapaths[int(device)]
@@ -143,26 +143,36 @@ class TrafficMonitor(app_manager.RyuApp):
         
         # delete
         for device, ports in flowInfo[old + '_A'].items():
+            #if device in flowInfo[new+'_A'].keys() and ports['input_port'] == flowInfo[new+'_A'][device]['input_port'] and ports['output_port'] == flowInfo[new+'_A'][device]['output_port']:
+            #    continue
             switch = self.datapaths[int(device)]           #, device['output_port']
             input_port = int(ports['input_port'])
             parser = switch.ofproto_parser
             match = parser.OFPMatch(in_port=input_port, eth_type=ether_types.ETH_TYPE_IP, ipv4_src=flowInfo['src_ip'], ipv4_dst=flowInfo['dst_ip'])
             self.del_flow(switch,match)
+        '''
         for device, ports in flowInfo[old+'_B'].items():
             switch = self.datapaths[int(device)]           #, device['output_port']
             input_port = int(ports['input_port'])
             parser = switch.ofproto_parser
             match = parser.OFPMatch(in_port=input_port, eth_type=ether_types.ETH_TYPE_IP, ipv4_src=flowInfo['dst_ip'], ipv4_dst=flowInfo['src_ip'])
             self.del_flow(switch,match)
-        #time.sleep(1)
+        '''
+
+        
+        #time.sleep(0.5)
+        
         # add
         for device, ports in flowInfo[new+'_A'].items():
+            #if device in flowInfo[old+'_A'].keys() and ports['input_port'] == flowInfo[old+'_A'][device]['input_port'] and ports['output_port'] == flowInfo[old+'_A'][device]['output_port']:
+            #    continue
             switch = self.datapaths[int(device)] 
             parser = switch.ofproto_parser
             input_port = int(ports['input_port'])
             actions = [parser.OFPActionOutput(int(ports['output_port']))]
             match = parser.OFPMatch(in_port=input_port, eth_type=ether_types.ETH_TYPE_IP, ipv4_src=flowInfo['src_ip'], ipv4_dst=flowInfo['dst_ip'])
             self.add_flow(switch, 1024, match, actions)
+        '''
         # Install B
         for device, ports in flowInfo[new+'_B'].items():
             switch = self.datapaths[int(device)] 
@@ -171,8 +181,8 @@ class TrafficMonitor(app_manager.RyuApp):
             actions = [parser.OFPActionOutput(int(ports['output_port']))]
             match = parser.OFPMatch(in_port=input_port, eth_type=ether_types.ETH_TYPE_IP, ipv4_src=flowInfo['dst_ip'], ipv4_dst=flowInfo['src_ip'])
             self.add_flow(switch, 1024, match, actions)
+        '''
         
-
         flowInfo['state'] = new 
 
     @set_ev_cls(ofp_event.EventOFPSwitchFeatures, CONFIG_DISPATCHER)
@@ -248,20 +258,21 @@ class TrafficMonitor(app_manager.RyuApp):
             #    self._request_stats(dp)
             print("---------------")
             if len(self.datapaths) > 1:
+                
                 print("Update !")
+                hub.sleep(5)
                 #self.update(1, self.method)
+                self.update(self.target_flow, self.method)
                 try:
-                    pass
-                    self.update(self.target_flow, self.method)
-                    #self.update(1, self.method)
-                    #self.update(2, self.method)
-                    #self.update(3, 'baseline')
+                    #self.update(self.target_flow, self.method)
+                    print("Finished")
+                    return 
                 except:
                     print("Catch")
                     pass
             else:
                 print("No switches")
-            hub.sleep(10)
+            hub.sleep(5)
 
     def drop_flow(self, datapath, match):
         ofproto = datapath.ofproto

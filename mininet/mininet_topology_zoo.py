@@ -96,10 +96,10 @@ def main():
     
     h2 = net.get('h2')
     h2.cmd('arp -s 10.0.0.13 00:00:00:00:00:0d')
-    h2.cmd('iperf3 -s &')
+    #h2.cmd('iperf3 -s &')
     h13 = net.get('h13')
     h13.cmd('arp -s 10.0.0.2 00:00:00:00:00:02')
-    h13.cmd('iperf3 -s &')
+    #h13.cmd('iperf3 -s &')
     
     h1 = net.get('h1')
     h1.cmd('arp -s 10.0.0.11 00:00:00:00:00:0b')
