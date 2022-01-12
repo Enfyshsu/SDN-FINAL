@@ -9,14 +9,16 @@ from ryu.lib.packet import packet
 from ryu.lib.packet import ethernet
 from ryu.lib.packet import ipv4
 from ryu.lib.packet import ether_types
+from ryu.ofproto import ofproto_v1_3
 import json
 import time
 
 class TrafficMonitor(app_manager.RyuApp):
+    OFP_VERSIONS = [ofproto_v1_3.OFP_VERSION]
     flow_path = []
     filename = "flow_path.json"
-    #method = 'IMU'
-    method = 'baseline'
+    method = 'IMU'
+    #method = 'baseline'
     target_flow = 0
     def __init__(self, *args, **kwargs):
         super(TrafficMonitor, self).__init__(*args, **kwargs)
@@ -128,6 +130,7 @@ class TrafficMonitor(app_manager.RyuApp):
             ports = flowInfo[old+d][device]
             match = parser.OFPMatch(in_port=int(ports['input_port']),eth_type=ether_types.ETH_TYPE_IP, ipv4_src=src_ip, ipv4_dst=dst_ip)
             self.del_flow(switch,match)
+            time.sleep(0.01)
         
 
     def _baselineUpdate(self,flowid):
@@ -141,6 +144,50 @@ class TrafficMonitor(app_manager.RyuApp):
             old = 'backup'
             new = 'main'
         
+        d = '_A'
+        src_ip = flowInfo['src_ip']
+        dst_ip = flowInfo['dst_ip']
+        newSet = set(flowInfo[new + d].keys())
+        oldSet = set(flowInfo[old + d].keys())
+        intersection = newSet & oldSet
+        addSet = newSet - intersection
+        deleteSet = oldSet - intersection
+
+        for device in intersection:
+            oldIn = flowInfo[old + d][device]['input_port']
+            oldOut = flowInfo[old + d][device]['output_port']
+            newIn = flowInfo[new + d][device]['input_port']
+            newOut = flowInfo[new + d][device]['output_port']
+            if oldIn == newIn and oldOut != newOut:
+                addSet.add(device)
+            else:
+                addSet.add(device)
+                deleteSet.add(device)
+        deleteSet.remove('13')
+        addSet.remove('13')
+        print("To delete")
+        for device in deleteSet:
+            print("Device ", device)
+            switch = self.datapaths[int(device)]
+            parser = switch.ofproto_parser
+            ports = flowInfo[old+d][device]
+            match = parser.OFPMatch(in_port=int(ports['input_port']),eth_type=ether_types.ETH_TYPE_IP, ipv4_src=src_ip, ipv4_dst=dst_ip)
+            self.del_flow(switch,match)
+            #time.sleep(0.01)
+
+        print("To add")
+        for device in addSet:
+            print("Device ", device)
+            switch = self.datapaths[int(device)] 
+            parser = switch.ofproto_parser
+            ports = flowInfo[new+d][device]
+            actions = [parser.OFPActionOutput(int(ports['output_port']))]
+            
+            match = parser.OFPMatch(in_port=int(ports['input_port']),eth_type=ether_types.ETH_TYPE_IP, ipv4_src=src_ip, ipv4_dst=dst_ip)
+            self.add_flow(switch, 1024, match, actions)
+            #time.sleep(0.01)
+
+        '''
         # delete
         for device, ports in flowInfo[old + '_A'].items():
             #if device in flowInfo[new+'_A'].keys() and ports['input_port'] == flowInfo[new+'_A'][device]['input_port'] and ports['output_port'] == flowInfo[new+'_A'][device]['output_port']:
@@ -150,7 +197,6 @@ class TrafficMonitor(app_manager.RyuApp):
             parser = switch.ofproto_parser
             match = parser.OFPMatch(in_port=input_port, eth_type=ether_types.ETH_TYPE_IP, ipv4_src=flowInfo['src_ip'], ipv4_dst=flowInfo['dst_ip'])
             self.del_flow(switch,match)
-        '''
         for device, ports in flowInfo[old+'_B'].items():
             switch = self.datapaths[int(device)]           #, device['output_port']
             input_port = int(ports['input_port'])
@@ -161,7 +207,7 @@ class TrafficMonitor(app_manager.RyuApp):
 
         
         #time.sleep(0.5)
-        
+        '''
         # add
         for device, ports in flowInfo[new+'_A'].items():
             #if device in flowInfo[old+'_A'].keys() and ports['input_port'] == flowInfo[old+'_A'][device]['input_port'] and ports['output_port'] == flowInfo[old+'_A'][device]['output_port']:
@@ -172,7 +218,7 @@ class TrafficMonitor(app_manager.RyuApp):
             actions = [parser.OFPActionOutput(int(ports['output_port']))]
             match = parser.OFPMatch(in_port=input_port, eth_type=ether_types.ETH_TYPE_IP, ipv4_src=flowInfo['src_ip'], ipv4_dst=flowInfo['dst_ip'])
             self.add_flow(switch, 1024, match, actions)
-        '''
+        
         # Install B
         for device, ports in flowInfo[new+'_B'].items():
             switch = self.datapaths[int(device)] 
@@ -201,7 +247,8 @@ class TrafficMonitor(app_manager.RyuApp):
         # correctly. The bug has been fixed in OVS v2.1.0.
         match = parser.OFPMatch()
         #actions = [parser.OFPActionOutput(ofproto.OFPP_FLOOD, 0)]
-        actions = [parser.OFPActionOutput(ofproto.OFPP_CONTROLLER, ofproto.OFPCML_NO_BUFFER)]
+        #actions = [parser.OFPActionOutput(ofproto.OFPP_CONTROLLER, ofproto.OFPCML_NO_BUFFER)]
+        actions = []
         self.add_flow(datapath, 0, match, actions)
         #self.send_port_states_request(datapath)
         
