@@ -46,6 +46,6 @@ if __name__ == '__main__':
     for flow_id in range(3):
         for pic_type in range (2):
             if pic_type == 0:
-                diff_packet_rate("Flow"+str(flow_id), "Packet Arrival Rate (number/ms)", "Dropped Packet Number", flow_id)
+                diff_packet_rate("Flow"+str(flow_id), "Packet Arrival Rate (packet/ms)", "Dropped Packet Number", flow_id)
             elif pic_type == 1:
-                diff_rtt("Flow"+str(flow_id), "Link Delay", "Dropped Packet Number", flow_id)
+                diff_rtt("Flow"+str(flow_id), "Link Delay (ms)", "Dropped Packet Number", flow_id)
